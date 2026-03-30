@@ -1,8 +1,11 @@
 abstract class Conteudo {
   String titulo = "";
+  int id = 0;
   int _classificacao = 0;
 
-  Conteudo(this.titulo);
+  Conteudo(
+    this.titulo, this.id
+  );
 
   int get classificacaoIndicativa => _classificacao;
 
@@ -19,7 +22,7 @@ abstract class Conteudo {
 }
 
 class Filme extends Conteudo {
-  Filme(super.titulo);
+  Filme(super.titulo, super.id);
 
   @override
   void darPlay() {
@@ -28,14 +31,18 @@ class Filme extends Conteudo {
 
   @override
   Map<String, dynamic> toJson() {
-    return {'titulo': titulo, 'classificacao': classificacaoIndicativa};
+    return {
+      "id": id,
+      'titulo': titulo,
+      'classificacao': classificacaoIndicativa
+    };
   }
 }
 
 class Serie extends Conteudo {
   int temporadas = 0;
 
-  Serie(this.temporadas, super.titulo);
+  Serie(this.temporadas, super.titulo, super.id);
 
   @override
   void darPlay() {
@@ -44,6 +51,11 @@ class Serie extends Conteudo {
 
   @override
   Map<String, dynamic> toJson() {
-    return {'titulo': titulo, 'classificacao': classificacaoIndicativa};
+    return {
+      "id": id,
+      'titulo': titulo,
+      'classificacao': classificacaoIndicativa,
+      'temporadas': temporadas
+    };
   }
 }
