@@ -3,9 +3,11 @@ abstract class Conteudo {
   int id = 0;
   int _classificacao = 0;
 
-  Conteudo(
-    this.titulo, this.id
-  );
+  List<double> _avaliacoes = [];
+
+  List<double> get avaliacoes => _avaliacoes;
+
+  Conteudo(this.titulo, this.id);
 
   int get classificacaoIndicativa => _classificacao;
 
@@ -16,13 +18,43 @@ abstract class Conteudo {
     _classificacao = classificacao;
   }
 
+  double soma = 0;
+
+  double get notaMedia {
+    if (_avaliacoes.isEmpty) {
+      return 0.0;
+    }
+
+    for (var i in _avaliacoes) {
+      soma += i;
+    }
+
+    return soma / _avaliacoes.length;
+  }
+
+  void avaliar(double nota) {
+    if (nota < 1.0 && nota > 5.0) {
+      throw Exception("Nota inválida! Use valores entre 1 e 5.");
+    }
+
+    _avaliacoes.add(nota);
+  }
+
+  String get estrelas {
+    notaMedia.round();
+
+    return "⭐" * 3;
+  }
+
   void darPlay();
 
   Map<String, dynamic> toJson();
 }
 
 class Filme extends Conteudo {
-  Filme(super.titulo, super.id);
+  Filme(super.titulo, super.id, List<double>avaliacoes) {
+    _avaliacoes = avaliacoes;
+  }
 
   @override
   void darPlay() {
@@ -34,7 +66,8 @@ class Filme extends Conteudo {
     return {
       "id": id,
       'titulo': titulo,
-      'classificacao': classificacaoIndicativa
+      'classificacao': classificacaoIndicativa,
+      "avaliacoes" : avaliacoes
     };
   }
 }
@@ -55,7 +88,8 @@ class Serie extends Conteudo {
       "id": id,
       'titulo': titulo,
       'classificacao': classificacaoIndicativa,
-      'temporadas': temporadas
+      'temporadas': temporadas,
+      "avaliacoes" : avaliacoes
     };
   }
 }

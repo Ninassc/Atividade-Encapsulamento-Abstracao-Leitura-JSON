@@ -7,6 +7,7 @@ void salvarCatalogo(List<Conteudo> catalogo) {
 
   List<Map<String, dynamic>> listaSalvar =
       catalogo.map((dados) => dados.toJson()).toList();
+
   arquivo.writeAsStringSync(jsonEncode(listaSalvar));
 }
 
@@ -16,6 +17,12 @@ void mostrarCatalogo(List<Conteudo> catalogo) {
     print("ID: ${dado.id}");
     print("Título: ${dado.titulo}");
     print("Classificação: ${dado.classificacaoIndicativa}");
+
+    // for(var nota in dado.avaliacoes){
+
+    // }
+
+    print("Avaliação: ${dado.estrelas}");
   }
 }
 
@@ -26,10 +33,10 @@ void main(List<String> arguments) {
 
   if (arquivo.existsSync()) {
     List<dynamic> dados = jsonDecode(arquivo.readAsStringSync());
-
     for (var item in dados) {
       Conteudo c1;
-      c1 = Filme(item['titulo'], item['id']);
+      c1 = Filme(
+          item['titulo'], item['id'], List<double>.from(item['avaliacoes']));
       try {
         c1.validarClassificacao(item['classificacao']);
         catalogo.add(c1);
@@ -39,7 +46,8 @@ void main(List<String> arguments) {
     }
   }
 
-  stdout.write("[1] para ADICIONAR\n[2] para DELETAR: ");
+  stdout.write(
+      "[1] para ADICIONAR\n[2] para DELETAR\n[3] AVALIAR CONTEÚDO\n [4] SAIR\n: ");
   String opcao = stdin.readLineSync()!;
 
   switch (opcao) {
@@ -59,7 +67,7 @@ void main(List<String> arguments) {
         }
       }
 
-      Conteudo f1 = Filme(titulo, id);
+      Conteudo f1 = Filme(titulo, id, []);
       catalogo.add(f1);
       try {
         f1.validarClassificacao(classificacao);
@@ -67,11 +75,33 @@ void main(List<String> arguments) {
         print(error);
       }
 
+      break;
+
     case "2":
       stdout.write("ID para exclusão: ");
       int id = int.parse(stdin.readLineSync()!);
 
       catalogo.removeWhere((filme) => filme.id == id);
+
+      break;
+
+    case "3":
+      stdout.write("ID: ");
+      int id = int.parse(stdin.readLineSync()!);
+
+      stdout.write("NOTA: ");
+      double nota = double.parse(stdin.readLineSync()!);
+
+      for (var dado in catalogo) {
+        if (dado.id == id) {
+          dado.avaliar(nota);
+        }
+      }
+      for (var i in catalogo) {
+        print(i.avaliacoes);
+      }
+
+      salvarCatalogo(catalogo);
   }
 
   salvarCatalogo(catalogo);
